@@ -74,8 +74,8 @@ sortUsername sheet = hoMergeSort getUser sheet
 
 sortMark :: Spreadsheet ->  Spreadsheet
 sortMark sheet = hoMergeSort getMark sheet
-    where getMark (lname, uname, mark) = mark
-
+    where getMark (lname, uname, mark) = -mark
+--use (0 - mark) as the return to sort by mark DESCENDING
 
 
 ----------------------------------------------------------------------
