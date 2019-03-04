@@ -2,9 +2,9 @@
 -- CO2008  Functional Programming                            
 -- Created: Feb 2019, University of Leicester, UK                        
 --------------------------------------------------------------------           
--- Student Name
--- Student Number
--- Student Login name
+-- Student Name	        Dominic Cousins
+-- Student Number       179003035
+-- Student Login name   dc346
 --------------------------------------------------------------------
 
 --These question can and should be answered using all the functions as mentioned on the
