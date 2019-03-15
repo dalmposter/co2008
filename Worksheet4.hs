@@ -49,10 +49,10 @@ data Error a = Fail|Ok a
                deriving (Eq, Ord, Show)
 
 type Card  = (Value, Suite)
-
 --Couldn't get this function working unfortunately
---instance Show Card where
---    show (v, s) = (show v)++(show s)
+
+myShow :: Card -> String
+myShow (v, s) = (show v)++(show s)
 
 --- Part c)
 pack :: [Card]
@@ -105,12 +105,22 @@ type Path =  [Dir]
     
 --- Part a)
 
---extract :: Path  -> Btree a -> Error a
+extract :: Path  -> Btree a -> Error a
+extract [] (Data a) = Ok a          --if the Dir list is empty and the tree is a data node, return the data in the node
+extract [] _ = Fail                 --if the Dir list is empty and the tree is anything else, return Fail
+extract (x:xs) (Branch left right)  --if we have at lease one Dir in the list and the tree starts with a branch, enter the branch and recur
+    | x == L = extract xs left
+    | x == R = extract xs right
+extract (x:xs) _ = Fail             --if we reached this clause we cannot perform a valid computation on the inputs
 
 
 --- Part b)
 
---add :: a -> Path -> Btree a -> Error (Btree a)
+add :: a -> Path -> Btree a -> Error (Btree a)
+add a [] (ND) = (Data a)
+add a (x:xs) (Branch left right)
+    | x == L = (Branch (add a xs left) right)
+    | x == R = (Branch left (add a xs right))
 
 
 --- Part c)
