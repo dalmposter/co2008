@@ -49,12 +49,12 @@ data Error a = Fail|Ok a
                deriving (Eq, Ord, Show)
 
 type Card  = (Value, Suite)
---Couldn't get this function working unfortunately
-
+--Print cards of the form "VS", i.e. the two of hearts (or (Two, hearts)) becomes "2H"
 myShow :: Card -> String
 myShow (v, s) = (show v)++(show s)
 
 --- Part c)
+
 pack :: [Card]
 pack = [(x, y) | y <- [(Hearts)..(Clubs)], x <- [(Two)..(A)]]
 
@@ -116,15 +116,30 @@ extract (x:xs) _ = Fail             --if we reached this clause we cannot perfor
 --- Part b)
 
 add :: a -> Path -> Btree a -> Error (Btree a)
-add a [] (ND) = (Data a)
-add a (x:xs) (Branch left right)
-    | x == L = (Branch (add a xs left) right)
-    | x == R = (Branch left (add a xs right))
+add a [] (ND) = Ok (Data a)
+add a ((L):xs) (Branch left right) =    case add a xs left of                   --data to be put on the left, get the tree on the left after add is complete
+                                        Fail -> Fail                            --if it's a fail, we fail
+                                        Ok newLeft -> Ok (Branch newLeft right) --otherwise extract the data from the Error type and re-wrap it
+
+add a ((R):xs) (Branch left right) =    case add a xs right of                  --as above but we're going right
+                                        Fail -> Fail
+                                        Ok newRight -> Ok (Branch left newRight)
+add _ _ _ = Fail    --if we didn't fit any of the other clauses, we tried to add data to a node containing data or in a position that doesn't exist
 
 
 --- Part c)
 
---findpath :: Eq b => (a -> b) -> b -> Btree a -> [Path]
+findpath :: Eq b => (a -> b) -> b -> Btree a -> [Path]
+findpath _ _ (ND)   = []            --if the tree is a node of no data, there is no path to y such that fun y = x
+
+findpath fun x (Data y)             --if the tree is just a node with data, apply the function to it and compare to input
+    | fun y == x    = [[]]          --if its a match return a list containing the empty path as this points to the tree itself
+    | otherwise     = []            --otherwise return a list of no paths (the data does not match criteria)
+
+findpath fun x (Branch left right) = (map ((L):) resLeft) ++ (map ((R):) resRight)  --add L to all paths that came from the left side and R to those from the right (as we went these directions to get to the subtrees
+    where
+        resLeft =   (findpath fun x left)   --execute this function again on left side
+        resRight =  (findpath fun x right)  --and the right
 
 
 tree1 = Branch ND ND
