@@ -43,7 +43,7 @@ instance Show Suite where
     show Clubs = "C"
     
 data Colour = Red | Black
-              deriving (Eq, Ord,Enum, Show)
+              deriving (Eq, Ord, Enum, Show)
 
 data Error a = Fail|Ok a
                deriving (Eq, Ord, Show)
@@ -82,12 +82,11 @@ interleave (x:xs) (y:ys) = x : y : (interleave xs ys)
 
 --- Part f)
 
---shuffle :: [Int] -> [a] -> Error [a]
---shuffle [] list = Ok list
---shuffle (x:xs) list
---    | split x list == Fail = Fail
---    | otherwise = shuffle xs (interleave fHalf sHalf)
---        where Ok (fHalf, sHalf) = split x list
+shuffle :: [Int] -> [a] -> Error [a]
+shuffle [] list = Ok list
+shuffle (x:xs) list = case split x list of
+    Fail -> Fail
+    Ok (fHalf, sHalf) -> shuffle xs (interleave fHalf sHalf)
 
 
 ---------------------------------------------------------------------
